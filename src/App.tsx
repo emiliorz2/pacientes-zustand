@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import { Form } from './components/Form'
 import { PatientsList } from './components/PatientsList'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <PatientsList />
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

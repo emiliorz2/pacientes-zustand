@@ -1,4 +1,6 @@
-import { FieldValues, useForm } from 'react-hook-form';
+import {  set, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { Error } from './Error';
 import { DraftPatient } from '../types';
 import { usePatientStore } from '../store/store';
@@ -7,11 +9,37 @@ export const Form = () => {
     //sintaxis opciional para destructurar el objeto
     // const {addPatient} = usePatientStore()
     const addPatient = usePatientStore(state => state.addPatient)
+    const activeId = usePatientStore(state => state.activeId)
+    const patients = usePatientStore(state => state.patients)
+    const updatePatient = usePatientStore(state => state.updatePatient)
 
-    const { register, handleSubmit, formState: { errors } } = useForm<DraftPatient>();
+    const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<DraftPatient>();
+
+    useEffect(() => {
+        if(activeId){
+            const activePatient = patients.filter(patient => patient.id === activeId)[0]
+            setValue('name', activePatient.name)
+            setValue('caretaker', activePatient.caretaker)
+            setValue('email', activePatient.email)
+            setValue('date', activePatient.date)
+            setValue('symptoms', activePatient.symptoms)
+        }
+    },[activeId])
 
     const registerPatient = (data: DraftPatient) => {
-        addPatient(data)
+        if(activeId){
+            updatePatient(data)
+            //otra forma de definirlo
+            toast('Paciente actualizado correctamente', {
+                type: 'success'
+                
+            })
+        }else{
+            addPatient(data)
+            toast.success('Paciente añadido correctamente')
+        }
+
+        reset()
     }
 
     return (
